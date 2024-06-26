@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+    <h2>Upcoming screenings:</h2>
+    <div class="row">
+        {% for m in movies %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <a href={% url 'movies:infomovie' m.pk %}>{{m.title}}</a>
+                    </div>
+                    <div class="card-body">By {{m.director}}</div>
+                    <div class="card-footer">{{m.duration}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if see_more %}
+        <div class="col d-flex align-items-center justify-content-center">
+            <a href="#">see more...</a>
+        </div>
+        {% endif %}
+    </div>
+{% endblock content %}

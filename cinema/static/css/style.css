@@ -1,0 +1,28 @@
+.custom-header {
+    height: auto;
+    background-color: rgb(168, 168, 207);
+}
+
+.custom-footer {
+    height: auto;
+    background-color: rgb(126, 126, 179);
+    float: left;
+    width: 100%;
+}
+
+.custom-footer p, .custom-footer li, .jumbotron h1 {
+    color: rgb(18, 17, 20);
+}
+
+.jumbotron h1 {
+    font-size: 60px;
+}
+
+body {
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+.separator-right {
+    border-right: 1px solid rgba(32, 30, 39, 0.692);
+    height: 100%;
+}

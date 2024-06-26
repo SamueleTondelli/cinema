@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{object.title}}{% endblock title %}
+{% block header1 %}
+    <h1>Movie Details</h1>
+{% endblock header1 %}
+{% block content %}
+    <h2><b>Title</b>: {{object.title}}</h2>
+    <br>
+    <p><b>Director</b>: {{object.director}}</p>
+    <br>
+    <p><b>Duration</b>: {{object.duration}}</p>
+    <br>
+    <p><b>Actors</b>: {{actor_list}}</p>
+    <br>
+    <p><b>Tags</b>: {{tag_list}}</p>
+    <br>
+    <p><b>Score</b>: {{view.get_movie_score}}/10</p>
+    <br>
+    {% if object.screenings.all.count == 0 %}
+        <p>There are no upcoming screenings</p>
+    {% else %}
+        <p><b>Upcoming screenings</b>:</p>
+        <div class="row">
+        {% for s in object.screenings.all %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <a href="#">{{s.date}} in room {{s.room.name}}</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    <br>
+    {% if object.reviews.all.count == 0 %}
+        <p>There are no reviews yet</p>
+    {% else  %}
+        {% if user.is_authenticated %}
+            <p><b>Reviews</b>:</p>
+            <div class="row">
+                {% for r in object.reviews.all %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">{{r.user.username}} gave a {{r.score}}/10</div>
+                            <div class="card-body">{{r.text}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <a href={% url "login" %}>You need to login to view reviews</a>
+        {% endif %}
+
+    {% endif %}
+{% endblock content %}

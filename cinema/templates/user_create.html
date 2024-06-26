@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{% if form.user_group_name == "Managers" %}Manager {% endif %}Registration
+{% endblock title %}
+{% block header1 %}
+    <h1>{% if form.user_group_name == "Managers" %}Manager {% endif %}Registration</h1>
+{% endblock header1 %}
+
+{% block content %}
+<form method="post"> {% csrf_token %}
+    {{form | crispy}}
+    <input type="submit" class="btn btn-info" value="Register{% if form.user_group_name == "Managers" %} Manager{% endif %}">
+</form>
+{% endblock %}
