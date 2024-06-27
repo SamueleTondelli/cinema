@@ -7,5 +7,7 @@ app_name = "movies"
 urlpatterns = [
     path("infomovie/<pk>/", MovieDetailView.as_view(), name="infomovie"),
     path("myreservations/", my_reservations, name="myreservations"),
-    path("upcomingmovies/", UpcomingMoviesView.as_view(), name="upcomingmovies")
+    path("upcomingmovies/", UpcomingMoviesView.as_view(), name="upcomingmovies"),
+    path("search/", search, name="search"),
+    path("search/<str:search_string>/<str:search_where>/<str:sorted>/", SearchResultsView.as_view(), name="searchresults")
 ]

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Search{% endblock title %}
+{% block header1 %}
+    <h1>Search</h1>
+{% endblock header1 %}
+
+{% block content %}
+    <h2>Search for movies</h2>
+    <div class="d-flex justify-content-center">
+        {% crispy form %}
+    </div>
+{% endblock content %}
