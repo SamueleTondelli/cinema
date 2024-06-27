@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <table id="seatsTable_id" style="border-collapse: separate; border-spacing: 10px;">
+        </table>
+        <form id="reservationForm_id" action="{{ request.path }}" method="POST"> {% csrf_token %}
+            <button type="submit" class="btn btn-info">Make Reservation</button>
+        </form>
+    </div>
+{% load static %}
+<script type="text/javascript" src={% static "/js/make_reservation.js" %}></script>
+
+{% endblock content %}

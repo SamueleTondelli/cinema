@@ -1,6 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from .models import *
@@ -9,6 +9,9 @@ from django.views.generic.list import ListView
 from .forms import *
 import re
 from collections import Counter
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+import json
 
 
 class MovieDetailView(DetailView):
@@ -107,3 +110,22 @@ class SearchResultsView(MovieListView):
             q = sorted(q, key=lambda m : 0 if m.get_score() == None else m.get_score(), reverse=True)
             
         return q
+    
+
+@login_required
+def make_reservation(request, pk):
+    if request.method == "POST":
+        print(f"Received {request.body}")
+        return HttpResponse("")
+    return render(request, template_name="movies/make_reservation.html")
+
+
+def get_screening_seats(request, pk):
+    s = get_object_or_404(MovieScreening, pk=pk)
+    print(f"requesting seats of {pk}")
+    info = {
+        "seats": s.seats,
+        "rows": s.room.seat_rows,
+        "cols": s.room.seat_cols
+    }
+    return HttpResponse(json.dumps(info))

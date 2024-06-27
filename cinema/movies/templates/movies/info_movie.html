@@ -27,7 +27,7 @@
             <div class="col-md-4">
                 <div class="card mb-2">
                     <div class="card-header">
-                        <a href="#">{{s.date}} in room {{s.room.name}}</a>
+                        <a href={% url "movies:makereservation" s.pk %}>{{s.date}} in room {{s.room.name}}</a>
                     </div>
                 </div>
             </div>

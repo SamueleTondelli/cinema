@@ -16,7 +16,7 @@
                 {% for s in m.screenings.all %}
                     {% if s.is_upcoming %}
                         <li>
-                            <a href="#">{{s.date}} in room {{s.room.name}} with {{s.get_free_seats}} seats available</a>
+                            <a href={% url "movies:makereservation" s.pk %}>{{s.date}} in room {{s.room.name}} with {{s.get_free_seats}} seats available</a>
                         </li>
                     {% endif %}
                 {% endfor %}
