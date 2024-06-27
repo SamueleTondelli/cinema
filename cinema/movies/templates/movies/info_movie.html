@@ -23,6 +23,7 @@
         <p><b>Upcoming screenings</b>:</p>
         <div class="row">
         {% for s in object.screenings.all %}
+            {% if s.is_upcoming %}
             <div class="col-md-4">
                 <div class="card mb-2">
                     <div class="card-header">
@@ -30,6 +31,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         {% endfor %}
         </div>
     {% endif %}

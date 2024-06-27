@@ -33,6 +33,3 @@ urlpatterns = [
 
 #erase_db()
 init_db()
-
-for s in MovieScreening.objects.all():
-    print(f"{s} {s.is_upcoming()}")
