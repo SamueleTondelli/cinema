@@ -1,8 +1,9 @@
 from typing import Any
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
+from django.contrib.auth.decorators import login_required
 from .models import *
-import json
+from django.utils import timezone
 
 
 class MovieDetailView(DetailView):
@@ -27,3 +28,13 @@ class MovieDetailView(DetailView):
         ctx["tag_list"] = tag_list[:-2]
         
         return ctx
+    
+
+@login_required
+def my_reservations(request):
+    user = get_object_or_404(User, pk=request.user.pk)
+    ctx = { 
+        "upcoming_res" : user.reservations.filter(screening__date__gte=timezone.now()).order_by('screening__date'),
+        "old_res" : user.reservations.filter(screening__date__lt=timezone.now()).order_by('-screening__date'),
+    }
+    return render(request, template_name="movies/my_reservations.html", context=ctx)

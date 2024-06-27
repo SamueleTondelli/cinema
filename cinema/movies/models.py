@@ -107,5 +107,14 @@ class Reservation(models.Model):
         for c in range(start_col, start_col + seats_number):
             self.seats.append((row, c))
     
+    def get_seats(self):
+        retval = ""
+        for s in self.seats:
+            retval += str(s[0]) + str(s[1]) + ", "
+        return retval[:-2]
+    
+    def user_has_reviewed(self):
+        return len(self.user.reviews.filter(movie=self.screening.movie)) > 0
+    
     def __str__(self):
         return str(self.screening) + " reserved by " + str(self.user)

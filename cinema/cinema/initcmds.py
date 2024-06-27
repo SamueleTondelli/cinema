@@ -76,6 +76,9 @@ def init_db():
         { "room": CinemaRoom.objects.filter(name__exact="R2")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today + timedelta(2) },
         { "room": CinemaRoom.objects.filter(name__exact="R3")[0], "movie": Movie.objects.filter(title__exact="RomAdv")[0], "date": today + timedelta(3) },
         { "room": CinemaRoom.objects.filter(name__exact="R3")[0], "movie": Movie.objects.filter(title__exact="FantMil")[0], "date": today + timedelta(4) },
+        { "room": CinemaRoom.objects.filter(name__exact="R1")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today - timedelta(1) },
+        { "room": CinemaRoom.objects.filter(name__exact="R1")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today - timedelta(2) },
+        { "room": CinemaRoom.objects.filter(name__exact="R3")[0], "movie": Movie.objects.filter(title__exact="RomAdv")[0], "date": today - timedelta(3) },
     ]
     
     m_screenings = []
@@ -94,6 +97,10 @@ def init_db():
         {"s": 1, "user": "user3", "seats_args": ("C",2,1)},
         {"s": 2, "user": "user4", "seats_args": ("D",1,6)},
         {"s": 3, "user": "user4", "seats_args": ("E",0,1)},
+        {"s": 0, "user": "user4", "seats_args": ("E",0,1)},
+        {"s": 4, "user": "user4", "seats_args": ("E",0,1)},
+        {"s": 5, "user": "user4", "seats_args": ("E",0,1)},
+        {"s": 6, "user": "user4", "seats_args": ("E",4,4)},
     ]
     
     for sr in reservations:
@@ -111,6 +118,7 @@ def init_db():
         {"user": "user3", "movie": Movie.objects.filter(title__exact="All")[0], "score": 5, "text": "oeiqjho wj weoijwo oiwj goiwj goiwrg oiwoig jwoigw jibviubeivbsiuvhbwibskvdjvbwasuvbakljv"},
         {"user": "user4", "movie": Movie.objects.filter(title__exact="All")[0], "score": 9, "text": "iwethiuwhe iuw euiwiue hui whiuwefh uiwefh uihwef iuh iu ehwiuefh iuhe iu"},
         {"user": "user1", "movie": Movie.objects.filter(title__exact="ActHorr")[0], "score": 5, "text": "iwethiuwhe iuw erterg ehwiuefh iuhe iu"},
+        {"user": "user4", "movie": Movie.objects.filter(title__exact="ActHorr")[0], "score": 9, "text": "iub ewqibw efiubwi uwe ibwe aiwuhiweb l  e"},
     ]
     
     for sr in reviews:

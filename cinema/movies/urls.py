@@ -6,4 +6,5 @@ app_name = "movies"
 
 urlpatterns = [
     path("infomovie/<pk>/", MovieDetailView.as_view(), name="infomovie"),
+    path("myreservations/", my_reservations, name="myreservations"),
 ]

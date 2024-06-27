@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}My Reservations{% endblock title %}
+{% block header1 %}
+    <h1>My Reservations</h1>
+{% endblock header1 %}
+
+{% block content %}
+    <h2>Upcoming</h2>
+    {% for r in upcoming_res %}
+        <div class="card mb-2">
+            <div class="card-header">
+                {{r.screening.movie.title}} on the {{r.screening.date}}
+            </div>
+            <div class="card-body">
+                {{r.get_seats}}
+            </div>
+        </div>
+    {% endfor %}
+    <br>
+    <h2>Old</h2>
+    {% for r in old_res %}
+        <div class="card mb-2">
+            <div class="card-header">
+                {{r.screening.movie.title}} on the {{r.screening.date}}
+            </div>
+            <div class="card-body">
+                {{r.get_seats}}
+            </div>
+            {% if not r.user_has_reviewed %}
+            <div class="card-footer">
+                <a href="#">Leave a review!</a>
+            </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock content %}
