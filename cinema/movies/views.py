@@ -1,9 +1,11 @@
 from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.utils import timezone
+from django.views.generic.list import ListView
 
 
 class MovieDetailView(DetailView):
@@ -38,3 +40,11 @@ def my_reservations(request):
         "old_res" : user.reservations.filter(screening__date__lt=timezone.now()).order_by('-screening__date'),
     }
     return render(request, template_name="movies/my_reservations.html", context=ctx)
+
+
+class UpcomingMoviesView(ListView):
+    model = Movie
+    template_name = "movies/upcoming_movies.html"
+    
+    def get_queryset(self) -> QuerySet[Any]:
+        return Movie.get_upcoming_movies()

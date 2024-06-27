@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
 
 class Tag(models.Model):
@@ -26,6 +27,14 @@ class Movie(models.Model):
             s += r.score
         return s/n
 
+    def get_upcoming_movies():
+        screenings = MovieScreening.objects.filter(date__gte=timezone.now()).order_by('date')
+        movies = []
+        for s in screenings:
+            if s.movie not in movies:
+                movies.append(s.movie)
+        return movies
+    
     def __str__(self):
         return '"' + self.title + '" by "' + self.director + '"'
     
@@ -91,6 +100,17 @@ class MovieScreening(models.Model):
         for c in range(start_col, start_col + seats_number):
             r[c] = res_id
         self.seats[row] = r
+        
+    def get_free_seats(self):
+        free = 0
+        for r in self.seats:
+            row = self.seats[r]
+            for s in row:
+                if s == None: free += 1
+        return free
+
+    def is_upcoming(self):
+        return self.date > timezone.now()
 
     def __str__(self):
         return str(self.movie) + " on the " + str(self.date)

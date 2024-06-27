@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Upcoming Movies{% endblock title %}
+{% block header1 %}
+    <h1>Upcoming Movies</h1>
+{% endblock header1 %}
+
+{% block content %}
+    {% for m in object_list %}
+        <div class="card mb-2">
+            <div class="card-header">
+                <a href={% url "movies:infomovie" m.pk %}>{{m.title}} by {{m.director}}</a>
+            </div>
+            <div class="card-body">
+                <ul>
+                {% for s in m.screenings.all %}
+                    {% if s.is_upcoming %}
+                        <li>
+                            <a href="#">{{s.date}} in room {{s.room.name}} with {{s.get_free_seats}} seats available</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+        </div>        
+    {% endfor %}
+{% endblock content %}

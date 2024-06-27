@@ -35,7 +35,7 @@
                 <a class="nav-link" href="#">Search</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Upcoming screenings</a>
+                <a class="nav-link" href={% url "movies:upcomingmovies" %}>Upcoming movies</a>
             </li>
             {% if  user.is_authenticated %}
             <li class="nav-item">

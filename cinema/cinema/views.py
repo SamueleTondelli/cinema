@@ -8,7 +8,7 @@ from movies.models import *
 
 HOMEPAGE_MAX_MOVIES = 5
 def home(request):
-    movies = Movie.objects.all()
+    movies = Movie.get_upcoming_movies()
     ctx = {
         "movies": movies[:HOMEPAGE_MAX_MOVIES],
         "see_more": len(movies) > HOMEPAGE_MAX_MOVIES

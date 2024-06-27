@@ -31,8 +31,8 @@ urlpatterns = [
     path("movies/", include("movies.urls"))
 ]
 
-erase_db()
+#erase_db()
 init_db()
 
-for r in User.objects.filter(username__exact="user4")[0].reservations.all():
-    print(f"{r} {r.user_has_reviewed()}")
+for s in MovieScreening.objects.all():
+    print(f"{s} {s.is_upcoming()}")

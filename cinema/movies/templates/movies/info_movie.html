@@ -24,7 +24,7 @@
         <div class="row">
         {% for s in object.screenings.all %}
             <div class="col-md-4">
-                <div class="card">
+                <div class="card mb-2">
                     <div class="card-header">
                         <a href="#">{{s.date}} in room {{s.room.name}}</a>
                     </div>
@@ -42,7 +42,7 @@
             <div class="row">
                 {% for r in object.reviews.all %}
                     <div class="col-md-4">
-                        <div class="card">
+                        <div class="card mb-2">
                             <div class="card-header">{{r.user.username}} gave a {{r.score}}/10</div>
                             <div class="card-body">{{r.text}}</div>
                         </div>
