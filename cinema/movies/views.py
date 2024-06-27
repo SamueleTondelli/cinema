@@ -42,9 +42,16 @@ def my_reservations(request):
     return render(request, template_name="movies/my_reservations.html", context=ctx)
 
 
-class UpcomingMoviesView(ListView):
+class MovieListView(ListView):
     model = Movie
-    template_name = "movies/upcoming_movies.html"
+    template_name = "movies/movie_list.html"
+    title = "Movie List"
+    header = title
+
+
+class UpcomingMoviesView(MovieListView):
+    title = "Upcoming Movies"
+    header = title
     
     def get_queryset(self) -> QuerySet[Any]:
         return Movie.get_upcoming_movies()
