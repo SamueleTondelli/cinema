@@ -15,4 +15,6 @@ urlpatterns = [
     path("screeningseats/<pk>/", get_screening_seats, name="screeningseats"),
     path("cancelres/<pk>/", cancel_res, name="cancelres"),
     path("leavereview/<pk>/", leave_review, name="leavereview"),
+    path("myreviews/", MyReviewsView.as_view(), name="myreviews"),
+    path("deletereview/<pk>/", delete_review, name="deletereview")
 ]

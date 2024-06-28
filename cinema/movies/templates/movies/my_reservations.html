@@ -5,56 +5,64 @@
     <h1>My Reservations</h1>
 {% endblock header1 %}
 {% block content %}
-{% if "ok" in request.GET.makeres or "err" in request.GET.makeres  %}
+    {% if "ok" in request.GET.makeres or "err" in request.GET.makeres  %}
 
-    <div id="info" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <p>{% if "ok" in request.GET.makeres %}Reservation made succesfully!{% else %}There was an error while processing your reservation!{% endif %} </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+        <div id="info" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>{% if "ok" in request.GET.makeres %}Reservation made succesfully!{% else %}There was an error while processing your reservation!{% endif %} </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div> 
-    <script>
-        $(document).ready(function(){
-            $("#info").modal('show');
-        });
-    </script>
+        </div> 
+        <script>
+            $(document).ready(function(){
+                $("#info").modal('show');
+            });
+        </script>
+    {% endif %}
 
-{% endif %}
-    <h2>Upcoming</h2>
-    {% for r in upcoming_res %}
-        <div class="card mb-2">
-            <div class="card-header">
-                <a href="{% url "movies:makereservation" r.screening.id %}">{{r.screening.movie.title}} on the {{r.screening.date}}</a>
+    {% if upcoming_res.count == 0 and old_res.count == 0 %}
+        <h2>You have no reservations</h2>
+    {% endif %}
+
+    {% if upcoming_res.count > 0 %}
+        <h2>Upcoming</h2>
+        {% for r in upcoming_res %}
+            <div class="card mb-2">
+                <div class="card-header">
+                    <a href="{% url "movies:makereservation" r.screening.id %}">{{r.screening.movie.title}} on the {{r.screening.date}}</a>
+                </div>
+                <div class="card-body">
+                    {{r.get_seats}}
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-warning" href="{% url 'movies:cancelres' r.id %}">Cancel Registration</a>
+                </div>
             </div>
-            <div class="card-body">
-                {{r.get_seats}}
+        {% endfor %}
+        <br>
+    {% endif %}
+    {% if old_res.count > 0 %}
+        <h2>Past</h2>
+        {% for r in old_res %}
+            <div class="card mb-2">
+                <div class="card-header">
+                    {{r.screening.movie.title}} on the {{r.screening.date}}
+                </div>
+                <div class="card-body">
+                    {{r.get_seats}}
+                </div>
+                {% if not r.user_has_reviewed %}
+                <div class="card-footer">
+                    <a href="{% url "movies:leavereview" r.screening.movie.id %}">Leave a review!</a>
+                </div>
+                {% endif %}
             </div>
-            <div class="card-footer">
-                <a class="btn btn-info" href="{% url 'movies:cancelres' r.id %}">Cancel Registration</a>
-            </div>
-        </div>
-    {% endfor %}
-    <br>
-    <h2>Past</h2>
-    {% for r in old_res %}
-        <div class="card mb-2">
-            <div class="card-header">
-                {{r.screening.movie.title}} on the {{r.screening.date}}
-            </div>
-            <div class="card-body">
-                {{r.get_seats}}
-            </div>
-            {% if not r.user_has_reviewed %}
-            <div class="card-footer">
-                <a href="{% url "movies:leavereview" r.screening.movie.id %}">Leave a review!</a>
-            </div>
-            {% endif %}
-        </div>
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
 {% endblock content %}

@@ -3,16 +3,16 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from django.utils import timezone
 from django.views.generic.list import ListView
 from .forms import *
 import re
 from collections import Counter
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 import json
-from django.views.generic.edit import CreateView
+from django.http import HttpResponseNotFound
 
 
 class MovieDetailView(DetailView):
@@ -82,6 +82,7 @@ def search(request):
         
     return render(request, template_name="movies/search.html", context={ "form": form })
 
+
 class SearchResultsView(MovieListView):
     title = "Search Results"
     header = title
@@ -121,6 +122,8 @@ class SearchResultsView(MovieListView):
 @login_required
 def make_reservation(request, pk):
     s = get_object_or_404(MovieScreening, pk=pk)
+    if s.date < timezone.now():
+        return HttpResponseNotFound("")
     if request.method == "POST":
         print(f"Received {request.body}")
         ress = Reservation.objects.filter(user=request.user,screening=s)
@@ -169,7 +172,7 @@ def get_screening_seats(request, pk):
 def cancel_res(request, pk):
     res = get_object_or_404(Reservation, pk=pk)
     if res.user != request.user:
-        return
+        return HttpResponseNotFound("")
     res.screening.remove_reservation(res.id)
     res.screening.save()
     res.delete()
@@ -194,3 +197,20 @@ def leave_review(request, pk):
     
     form = ReviewForm()
     return render(request, template_name="movies/leave_review.html", context={"movie":movie, "form": form})
+
+
+class MyReviewsView(LoginRequiredMixin, ListView):
+    model = Review
+    template_name = "movies/my_reviews.html"
+    
+    def get_queryset(self) -> QuerySet[Any]:
+        user = User.objects.filter(id=self.request.user.id)[0]
+        return Review.objects.filter(user=user)
+    
+@login_required
+def delete_review(request, pk):
+    rev = get_object_or_404(Review, pk=pk)
+    if rev.user != request.user:
+        return HttpResponseNotFound("")
+    rev.delete()
+    return redirect("movies:myreviews")

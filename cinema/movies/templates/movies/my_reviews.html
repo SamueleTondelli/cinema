@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Reviews{% endblock title %}
+{% block header1 %}
+    <h1>My Reviews</h1>
+{% endblock header1 %}
+
+{% block content %}
+    <h2>You have left {{object_list.count}} review{% if object_list.count != 1 %}s{% endif %}</h2>
+    {% for r in object_list %}
+        <div class="card mb-2">
+            <div class="card-header">
+                <a href="{% url "movies:infomovie" r.movie.id %}">{{r.movie.title}}</a>
+            </div>
+            <div class="card-body">
+                <p><b>{{r.score}}</b>: {{r.text}}</p>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-warning" href="{% url 'movies:deletereview' r.id %}">Delete Review</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}
