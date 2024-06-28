@@ -7,13 +7,13 @@ var res_id = 0;
 const xhttp = new XMLHttpRequest()
 xhttp.onload = function() {
     if (initialized) {
-        console.log(this.responseText);
+        //console.log(this.responseText);
         window.location.replace(this.responseText);
         return;
     }
     initialized = true;
     data = JSON.parse(this.responseText);
-    console.log(data)
+    //console.log(data)
     var seatsTable = document.getElementById("seatsTable_id");
     seatsTable.style.borderSpacing = "5px"
     
@@ -71,8 +71,8 @@ xhttp.onload = function() {
 }
 
 function cellClicked(node_id) {
-    console.log(node_id);
-    console.log(seats[node_id]);
+    //console.log(node_id);
+    //console.log(seats[node_id]);
     var node = document.getElementById(node_id + "_id");
     if (seats[node_id] === "free") {
         seats[node_id] = "reserving";
@@ -92,7 +92,7 @@ function cellClicked(node_id) {
 
 document.getElementById("reservationForm_id").addEventListener("submit", function (e) {
     e.preventDefault();
-    console.log(reserving_seats);
+    //console.log(reserving_seats);
     if (reserving_seats.length === 0) {
         alert("You need to select at least 1 seat");
         return;
