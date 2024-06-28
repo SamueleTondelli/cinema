@@ -36,6 +36,9 @@
         </div>
     {% endif %}
     <br>
+    {% if view.can_user_review %}
+        <a href="{% url "movies:leavereview" object.id %}">Leave a review!</a>
+    {% endif %}
     {% if object.reviews.all.count == 0 %}
         <p>There are no reviews yet</p>
     {% else  %}

@@ -52,7 +52,7 @@
             </div>
             {% if not r.user_has_reviewed %}
             <div class="card-footer">
-                <a href="#">Leave a review!</a>
+                <a href="{% url "movies:leavereview" r.screening.movie.id %}">Leave a review!</a>
             </div>
             {% endif %}
         </div>

@@ -27,6 +27,19 @@ class Movie(models.Model):
             s += r.score
         return s/n
 
+    def can_user_review(self, user_id):
+        if len(Review.objects.filter(user__id=user_id, movie=self)) > 0:
+            return False
+        
+        ress = Reservation.objects.filter(screening__movie=self, user__id=user_id).order_by("-screening__date")
+        if len(ress) == 0:
+            return False
+        
+        if ress[0].screening.date > timezone.now():
+            return False
+        
+        return True
+
     def get_upcoming_movies():
         screenings = MovieScreening.objects.filter(date__gte=timezone.now()).order_by('date')
         movies = []

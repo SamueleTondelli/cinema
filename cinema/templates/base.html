@@ -37,6 +37,9 @@
             <li class="nav-item">
                 <a class="nav-link" href={% url "movies:upcomingmovies" %}>Upcoming movies</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href={% url "movies:movielist" %}>All movies</a>
+            </li>
             {% if  user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href={% url "movies:myreservations" %}>My reservations</a>

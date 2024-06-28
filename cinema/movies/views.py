@@ -10,8 +10,9 @@ from .forms import *
 import re
 from collections import Counter
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 import json
+from django.views.generic.edit import CreateView
 
 
 class MovieDetailView(DetailView):
@@ -36,6 +37,11 @@ class MovieDetailView(DetailView):
         ctx["tag_list"] = tag_list[:-2]
         
         return ctx
+    
+    def can_user_review(self):
+        if self.request.user.is_authenticated:
+            return self.get_object().can_user_review(self.request.user.id)
+        return False
     
 
 @login_required
@@ -168,3 +174,23 @@ def cancel_res(request, pk):
     res.screening.save()
     res.delete()
     return redirect("movies:myreservations")
+
+
+@login_required
+def leave_review(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            score = form.cleaned_data.get("score")
+            text = form.cleaned_data.get("text")
+            r = Review()
+            r.movie = movie
+            r.user = request.user
+            r.score = score
+            r.text = text
+            r.save()
+            return redirect("movies:infomovie", pk)
+    
+    form = ReviewForm()
+    return render(request, template_name="movies/leave_review.html", context={"movie":movie, "form": form})

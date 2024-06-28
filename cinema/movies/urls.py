@@ -8,9 +8,11 @@ urlpatterns = [
     path("infomovie/<pk>/", MovieDetailView.as_view(), name="infomovie"),
     path("myreservations/", my_reservations, name="myreservations"),
     path("upcomingmovies/", UpcomingMoviesView.as_view(), name="upcomingmovies"),
+    path("movielist/", MovieListView.as_view(), name="movielist"),
     path("search/", search, name="search"),
     path("search/<str:search_string>/<str:search_where>/<str:sorted>/", SearchResultsView.as_view(), name="searchresults"),
     path("makereservation/<pk>/", make_reservation, name="makereservation"),
     path("screeningseats/<pk>/", get_screening_seats, name="screeningseats"),
-    path("cancelres/<pk>/", cancel_res, name="cancelres")
+    path("cancelres/<pk>/", cancel_res, name="cancelres"),
+    path("leavereview/<pk>/", leave_review, name="leavereview"),
 ]

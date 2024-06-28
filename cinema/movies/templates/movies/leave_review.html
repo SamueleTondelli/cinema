@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{movie.title}}{% endblock title %}
+{% block header1 %}
+    <h1>{{movie.title}}</h1>
+{% endblock header1 %}
+
+{% block content %}
+    <h2>Leave a review for {{movie.title}}!</h2>
+    <form method="POST">
+        {% crispy form %}
+    <form>
+{% endblock content %}
