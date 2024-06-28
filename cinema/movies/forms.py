@@ -16,16 +16,3 @@ class SearchForm(forms.Form):
     sort_by_score = forms.BooleanField(label="Sort by score", required=False)
     
     
-class ReservationForm(forms.Form):
-    helper = FormHelper()
-    helper.form_id = "create_reservation_crispy_form"
-    helper.form_method = "POST"
-    helper.add_input(Submit("submit","Make Reservation"))
-    
-    def __init__(self, screening_id, *args, **kwargs):
-        super().__init__(args, kwargs)
-        s = get_object_or_404(MovieScreening, pk=screening_id)
-    
-    class Meta:
-        model = Reservation
-        fields = ["seats"]
