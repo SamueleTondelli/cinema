@@ -1,11 +1,14 @@
 const seats = []
 const reserving_seats = []
 var initialized = false;
+var editing = false;
+var res_id = 0;
 
 const xhttp = new XMLHttpRequest()
 xhttp.onload = function() {
     if (initialized) {
         console.log(this.responseText);
+        window.location.replace(this.responseText);
         return;
     }
     initialized = true;
@@ -14,6 +17,11 @@ xhttp.onload = function() {
     var seatsTable = document.getElementById("seatsTable_id");
     seatsTable.style.borderSpacing = "5px"
     
+    if ("res_id" in data) {
+        editing = true;
+        res_id = data["res_id"];
+    }
+
     cols = data["cols"]
     nSeats = data["rows"] * cols;
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -34,13 +42,20 @@ xhttp.onload = function() {
 
         var node = document.createElement("td");
         node.id = i + "_id";
-        if (data["seats"][letters[row]][col] == null) {
-            node.style.backgroundColor = "LightGrey";
+        if (data["seats"][letters[row]][col] == null || (editing && data["seats"][letters[row]][col] == res_id)) {
+            var pushstr = "free"
+            if (data["seats"][letters[row]][col] == res_id) {
+                node.style.backgroundColor = "Green";
+                pushstr = "reserving";
+                reserving_seats.push(node.id.split("_")[0]);
+            } else {
+                node.style.backgroundColor = "LightGrey";
+            }
             node.style.cursor = "pointer";
             node.onclick = function() { 
                 cellClicked(this.id.split("_")[0]);
             };
-            seats.push("free");
+            seats.push(pushstr);
         }
         else {
             node.style.backgroundColor = "Red";

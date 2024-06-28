@@ -4,16 +4,39 @@
 {% block header1 %}
     <h1>My Reservations</h1>
 {% endblock header1 %}
-
 {% block content %}
+{% if "ok" in request.GET.makeres or "err" in request.GET.makeres  %}
+
+    <div id="info" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>{% if "ok" in request.GET.makeres %}Reservation made succesfully!{% else %}There was an error while processing your reservation!{% endif %} </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <script>
+        $(document).ready(function(){
+            $("#info").modal('show');
+        });
+    </script>
+
+{% endif %}
     <h2>Upcoming</h2>
     {% for r in upcoming_res %}
         <div class="card mb-2">
             <div class="card-header">
-                {{r.screening.movie.title}} on the {{r.screening.date}}
+                <a href="{% url "movies:makereservation" r.screening.id %}">{{r.screening.movie.title}} on the {{r.screening.date}}</a>
             </div>
             <div class="card-body">
                 {{r.get_seats}}
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-info" href="{% url 'movies:cancelres' r.id %}">Cancel Registration</a>
             </div>
         </div>
     {% endfor %}

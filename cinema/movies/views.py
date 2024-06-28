@@ -10,7 +10,7 @@ from .forms import *
 import re
 from collections import Counter
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 import json
 
 
@@ -114,18 +114,57 @@ class SearchResultsView(MovieListView):
 
 @login_required
 def make_reservation(request, pk):
+    s = get_object_or_404(MovieScreening, pk=pk)
     if request.method == "POST":
         print(f"Received {request.body}")
-        return HttpResponse("")
-    return render(request, template_name="movies/make_reservation.html")
+        ress = Reservation.objects.filter(user=request.user,screening=s)
+        if len(ress) > 0:
+            r = ress[0]
+            s = r.screening
+            s.remove_reservation(r.id)
+            r.seats = []
+        else:
+            r = Reservation()
+            r.user = request.user
+            r.screening = s
+            r.save()
+
+        resp = json.loads(request.body)
+        try:
+            for seat in resp["reserving_seats"]:
+                r.set_seat_from_idx(int(seat))
+            r.save()
+            s.save()
+        except Exception as e:
+            print(e)
+            r.delete()
+            return HttpResponse(reverse("movies:myreservations") + "?makeres=err")    
+        return HttpResponse(reverse("movies:myreservations") + "?makeres=ok")
+    return render(request, template_name="movies/make_reservation.html", context={"screening": s})
 
 
+@login_required
 def get_screening_seats(request, pk):
     s = get_object_or_404(MovieScreening, pk=pk)
+    user = request.user
+    r = Reservation.objects.filter(user=user,screening=s)
     print(f"requesting seats of {pk}")
     info = {
         "seats": s.seats,
         "rows": s.room.seat_rows,
         "cols": s.room.seat_cols
     }
+    if (len(r) > 0):
+        info["res_id"] = r[0].id
     return HttpResponse(json.dumps(info))
+
+
+@login_required
+def cancel_res(request, pk):
+    res = get_object_or_404(Reservation, pk=pk)
+    if res.user != request.user:
+        return
+    res.screening.remove_reservation(res.id)
+    res.screening.save()
+    res.delete()
+    return redirect("movies:myreservations")

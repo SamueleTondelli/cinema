@@ -101,6 +101,12 @@ class MovieScreening(models.Model):
             r[c] = res_id
         self.seats[row] = r
         
+    def remove_reservation(self, res_id):
+        for r in self.seats:
+            row = self.seats.get(r)
+            row = [None if e == res_id else e for e in row]
+            self.seats[r] = row
+        
     def get_free_seats(self):
         free = 0
         for r in self.seats:
@@ -127,10 +133,19 @@ class Reservation(models.Model):
         for c in range(start_col, start_col + seats_number):
             self.seats.append((row, c))
     
+    def set_seat_from_idx(self, idx):
+        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        row = letters[idx // self.screening.room.seat_cols]
+        col = idx % self.screening.room.seat_cols
+        print(f"{idx}: {row}{col}")
+        self.screening.set_reservation(row, col, 1, self.id)
+        self.seats.append((row, col))
+    
     def get_seats(self):
         retval = ""
-        for s in self.seats:
-            retval += str(s[0]) + str(s[1]) + ", "
+        l = sorted(self.seats)
+        for s in l:
+            retval += str(s[0]) + str(s[1] + 1) + ", "
         return retval[:-2]
     
     def user_has_reviewed(self):

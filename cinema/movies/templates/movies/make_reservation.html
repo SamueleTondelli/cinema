@@ -1,5 +1,10 @@
 {% extends "base.html" %}
+{% block title %}Reservation{% endblock title %}
+{% block header1 %}
+    <h1>{{screening.movie.title}}
+{% endblock header1 %}
 {% block content %}
+    <h2>At {{screening.date}} in room {{screening.room.name}}</h2>
     <div>
         <table id="seatsTable_id" style="border-collapse: separate; border-spacing: 10px;">
         </table>
