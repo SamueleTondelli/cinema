@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{{view.title}}{% endblock title %}
+
+{% block header1 %}
+    <h1>{{view.title}}</h1>
+{% endblock header1 %}
+
+{% block content %}
+    <form method="POST">
+        {% crispy form %}
+    <form>
+{% endblock content %}

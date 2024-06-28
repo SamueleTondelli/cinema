@@ -16,5 +16,9 @@ urlpatterns = [
     path("cancelres/<pk>/", cancel_res, name="cancelres"),
     path("leavereview/<pk>/", leave_review, name="leavereview"),
     path("myreviews/", MyReviewsView.as_view(), name="myreviews"),
-    path("deletereview/<pk>/", delete_review, name="deletereview")
+    path("deletereview/<pk>/", delete_review, name="deletereview"),
+    path("managermenu/", manager_menu, name="managermenu"),
+    path("addmovie/", AddMovieView.as_view(), name="addmovie"),
+    path("addscreening/", AddScreeningView.as_view(), name="addscreening"),
+    path("addroom/", AddRoomView.as_view(), name="addroom")
 ]

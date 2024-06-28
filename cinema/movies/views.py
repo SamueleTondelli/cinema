@@ -13,6 +13,9 @@ from collections import Counter
 from django.urls import reverse
 import json
 from django.http import HttpResponseNotFound
+from django.contrib.auth.decorators import user_passes_test
+from django.views.generic.edit import CreateView
+from braces.views import GroupRequiredMixin
 
 
 class MovieDetailView(DetailView):
@@ -214,3 +217,35 @@ def delete_review(request, pk):
         return HttpResponseNotFound("")
     rev.delete()
     return redirect("movies:myreviews")
+
+
+def is_manager(user):
+    return user.groups.filter(name="Managers").exists()
+
+
+@user_passes_test(is_manager)
+def manager_menu(request):
+    return render(request, template_name="movies/manager_menu.html")
+
+
+class AddEntryView(CreateView):
+    title = "Add Entry"
+    template_name = "movies/add_entry.html"
+
+
+class AddMovieView(GroupRequiredMixin, AddEntryView):
+    group_required = ["Managers"]
+    title = "Add Movie"
+    model = Movie
+    
+    
+class AddScreeningView(GroupRequiredMixin, AddEntryView):
+    group_required = ["Managers"]
+    title = "Add Screening"
+    model = MovieScreening
+    
+    
+class AddRoomView(GroupRequiredMixin, AddEntryView):
+    group_required = ["Managers"]
+    title = "Add Room"
+    model = CinemaRoom

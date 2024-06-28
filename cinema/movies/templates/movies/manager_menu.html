@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Manager{% endblock title %}
+{% block header1 %}
+    <h1>Manager Menu</h1>
+{% endblock header1 %}
+
+{% block content %}
+    <h2>Actions:</h2>
+    <br>
+    <div class="list-group">
+        <a href="{% url "movies:addmovie" %}" class="list-group-item list-group-item-info">Add Movie</a>
+        <a href="{% url "movies:addscreening" %}" class="list-group-item list-group-item-info">Add Screening</a>
+        <a href="{% url "movies:addroom" %}" class="list-group-item list-group-item-info">Add Room</a>
+    </div>
+{% endblock content %}

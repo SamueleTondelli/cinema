@@ -11,7 +11,8 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href='{% static "/css/style.css" %}'>
     {% endblock %}
-    {% load crispy_forms_tags %} 
+    {% load crispy_forms_tags %}
+    {% load auth_extras %}
 </head>
 
 <title>{% block title %} {% endblock %}</title> 
@@ -56,6 +57,13 @@
                 Hello {{user.username}}!
             </span>
           </li>
+          {% if request.user|has_group:"Managers" or user.is_staff %}
+          <li class="nav-item">
+            <li class="nav-item mr-3">
+                <a class="btn btn-info" href="{% url 'movies:managermenu' %}">Manager Menu</a>
+              </li>
+          </li>
+          {% endif %}
           {% if user.is_staff %}
           <li class="nav-item">
             <li class="nav-item mr-3">
