@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Remove Rooms{% endblock title %}
+{% block header1 %}
+    <h1>Remove Rooms</h1>
+{% endblock header1 %}
+
+{% block content %}
+    {% if object_list|length == 0 %}
+        <h2>There are no rooms</h2>
+    {% endif %}
+    {% for r in object_list %}
+    <div class="card mb-2">
+        <div class="card-header">{{r}}</div>
+        <div class="card-body">
+            <a class="btn btn-danger" href="{% url 'movies:deleteroom' r.pk %}">Remove</a>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock content %}

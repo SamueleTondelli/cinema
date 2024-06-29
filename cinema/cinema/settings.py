@@ -115,7 +115,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -128,5 +127,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,"static")]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-LOGIN_REDIRECT_URL = "/?login=ok"
+LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login/?auth=notok"

@@ -3,7 +3,11 @@
 {% block title %}Home{% endblock title %}
 
 {% block content %}
-    <h2>Upcoming screenings:</h2>
+    {% if movies|length == 0 %}
+        <h2>There are no upcoming movies</h2>
+    {% else %}
+        <h2>Upcoming movies:</h2>
+    {% endif %}
     <div class="row">
         {% for m in movies %}
             <div class="col">

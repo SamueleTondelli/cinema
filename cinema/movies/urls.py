@@ -20,5 +20,11 @@ urlpatterns = [
     path("managermenu/", manager_menu, name="managermenu"),
     path("addmovie/", AddMovieView.as_view(), name="addmovie"),
     path("addscreening/", AddScreeningView.as_view(), name="addscreening"),
-    path("addroom/", AddRoomView.as_view(), name="addroom")
+    path("addroom/", AddRoomView.as_view(), name="addroom"),
+    path("cancelscreenings/", CancelScreeningsView.as_view(), name="cancelscreenings"),
+    path("deletescreening/<pk>/", delete_screening, name="deletescreening"),
+    path("removemovies/", RemoveMoviesView.as_view(), name="removemovies"),
+    path("deletemovie/<pk>/", delete_movie, name="deletemovie"),
+    path("removerooms/", RemoveRoomsView.as_view(), name="removerooms"),
+    path("deleteroom/<pk>/", delete_room, name="deleteroom")
 ]

@@ -10,7 +10,7 @@ from django.views.generic.list import ListView
 from .forms import *
 import re
 from collections import Counter
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 import json
 from django.http import HttpResponseNotFound
 from django.contrib.auth.decorators import user_passes_test
@@ -237,15 +237,69 @@ class AddMovieView(GroupRequiredMixin, AddEntryView):
     group_required = ["Managers"]
     title = "Add Movie"
     model = Movie
+    form_class = AddMovieForm
+    success_url = reverse_lazy("movies:managermenu")
     
     
 class AddScreeningView(GroupRequiredMixin, AddEntryView):
     group_required = ["Managers"]
     title = "Add Screening"
     model = MovieScreening
+    form_class = AddScreeningForm
+    success_url = reverse_lazy("movies:managermenu")
     
     
 class AddRoomView(GroupRequiredMixin, AddEntryView):
     group_required = ["Managers"]
     title = "Add Room"
     model = CinemaRoom
+    model = CinemaRoom
+    form_class = AddRoomForm
+    success_url = reverse_lazy("movies:managermenu")
+    
+    
+class CancelScreeningsView(GroupRequiredMixin, ListView):
+    group_required = ["Managers"]
+    model = MovieScreening
+    template_name = "movies/cancel_screenings.html"
+    
+    def get_queryset(self):
+        return MovieScreening.objects.filter(date__gte=timezone.now()).order_by("date")
+    
+    
+@user_passes_test(is_manager)
+def delete_screening(request, pk):
+    s = get_object_or_404(MovieScreening, pk=pk)
+    s.delete()
+    return redirect("movies:cancelscreenings")
+
+
+class RemoveMoviesView(GroupRequiredMixin, MovieListView):
+    group_required = ["Managers"]
+    title = "Delete movies"
+    header = title
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        ctx["delete_movie"] = "yes"
+        return ctx
+    
+
+@user_passes_test(is_manager)
+def delete_movie(request, pk):
+    m = get_object_or_404(Movie, pk=pk)
+    m.delete()
+    return redirect("movies:removemovies")
+
+
+class RemoveRoomsView(GroupRequiredMixin, ListView):
+    group_required = ["Managers"]
+    model = CinemaRoom
+    template_name = "movies/remove_rooms.html"
+    
+
+@user_passes_test(is_manager)
+def delete_room(request, pk):
+    r = get_object_or_404(CinemaRoom, pk=pk)
+    r.delete()
+    return redirect("movies:removerooms")

@@ -6,6 +6,9 @@
 {% endblock header1 %}
 
 {% block content %}
+    {% if object_list|length == 0 %}
+        <h2>There are no movies here</h2>
+    {% endif %}
     {% for m in object_list %}
         <div class="card mb-2">
             <div class="card-header">
@@ -22,6 +25,11 @@
                 {% endfor %}
                 </ul>
             </div>
+            {% if delete_movie == "yes" %}
+            <div class="card-footer">
+                <a class="btn btn-danger" href="{% url 'movies:deletemovie' m.pk %}">Remove</a>
+            </div>
+            {% endif %}
         </div>        
     {% endfor %}
 {% endblock content %}

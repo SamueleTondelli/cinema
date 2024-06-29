@@ -12,4 +12,10 @@
         <a href="{% url "movies:addscreening" %}" class="list-group-item list-group-item-info">Add Screening</a>
         <a href="{% url "movies:addroom" %}" class="list-group-item list-group-item-info">Add Room</a>
     </div>
+    <br>
+    <div class="list-group">
+        <a href="{% url "movies:removemovies" %}" class="list-group-item list-group-item-danger">Remove Movies</a>
+        <a href="{% url "movies:cancelscreenings" %}" class="list-group-item list-group-item-danger">Cancel Screenings</a>
+        <a href="{% url "movies:removerooms" %}" class="list-group-item list-group-item-danger">Remove Room</a>
+    </div>
 {% endblock content %}

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+import datetime
+from django.core.exceptions import ValidationError
 
 
 class Tag(models.Model):
@@ -83,6 +85,21 @@ class MovieScreening(models.Model):
     room = models.ForeignKey(CinemaRoom, on_delete=models.CASCADE, related_name="screenings")
     seats = models.JSONField(default=dict)
     date = models.DateTimeField()
+    
+    def clean(self):
+        super().clean()
+        
+        screenings = MovieScreening.objects.filter(room=self.room)
+        print(screenings)
+        for s in screenings:
+            print(s.date - self.date)
+            if s.date > self.date:
+                if self.movie.duration >= s.date - self.date:
+                    raise ValidationError(f"Error, screening overlapping with {s}")
+            else:
+                if s.movie.duration >= self.date - s.date:
+                    raise ValidationError(f"Error, screening overlapping with {s}")
+            
     
     def init_seats(self):
         rows = self.room.seat_rows
