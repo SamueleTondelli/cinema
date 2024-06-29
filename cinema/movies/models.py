@@ -90,7 +90,6 @@ class MovieScreening(models.Model):
         super().clean()
         
         screenings = MovieScreening.objects.filter(room=self.room)
-        print(screenings)
         for s in screenings:
             print(s.date - self.date)
             if s.date > self.date:
