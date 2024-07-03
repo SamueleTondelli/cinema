@@ -19,6 +19,7 @@ from django.urls import path, re_path, include
 from django.contrib.auth import views as auth_view
 from .initcmds import *
 from .views import *
+from movies.recommendation import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,4 +33,4 @@ urlpatterns = [
 ]
 
 #erase_db()
-init_db()
+#init_db()

@@ -26,4 +26,21 @@
         </div>
         {% endif %}
     </div>
+    {% if recommended != None %}
+        <br>
+        <h2>Recommended for you:</h2>
+        <div class="row">
+            {% for m in recommended %}
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <a href={% url 'movies:infomovie' m.pk %}>{{m.title}}</a>
+                        </div>
+                        <div class="card-body">By {{m.director}}</div>
+                        <div class="card-footer">{{m.duration}}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock content %}

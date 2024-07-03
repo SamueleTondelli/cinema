@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
-import datetime
 from django.core.exceptions import ValidationError
+from math import sqrt
 
 
 class Tag(models.Model):
@@ -182,3 +182,4 @@ class Reservation(models.Model):
     
     def __str__(self):
         return str(self.screening) + " reserved by " + str(self.user)
+    
