@@ -16,10 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_view
 from .initcmds import *
 from .views import *
 from movies.recommendation import *
+from django.conf import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +33,7 @@ urlpatterns = [
     path("registermanager/", CreateManagerView.as_view(), name="registermanager"),
     
     path("movies/", include("movies.urls"))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
 
 #erase_db()
 #init_db()

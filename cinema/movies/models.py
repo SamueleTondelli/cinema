@@ -19,6 +19,7 @@ class Movie(models.Model):
     actors = models.JSONField(default=list)
     duration = models.DurationField()
     tags = models.ManyToManyField(Tag, related_name="movies")
+    cover = models.ImageField(upload_to="movies/covers", default="movies/covers/default.webp")
     
     def get_score(self):
         revs = self.reviews.all()

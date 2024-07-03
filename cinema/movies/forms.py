@@ -39,7 +39,7 @@ class AddMovieForm(forms.ModelForm):
     
     class Meta:
         model = Movie
-        fields = ["title", "director", "duration", "tags"]
+        fields = ["title", "director", "duration", "tags", "cover"]
         widgets = {
             "tags": CheckboxSelectMultiple(),
         }
