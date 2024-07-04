@@ -17,7 +17,7 @@
     <br>
     <p><b>Tags</b>: {{tag_list}}</p>
     <br>
-    <p><b>Score</b>: {{view.get_movie_score}}/10</p>
+    <p><b>Score</b>: {{view.get_movie_score|floatformat:1}}/10</p>
     <br>
     {% if object.screenings.all.count == 0 %}
         <p>There are no upcoming screenings</p>
