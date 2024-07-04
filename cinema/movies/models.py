@@ -124,7 +124,7 @@ class MovieScreening(models.Model):
         
         for c in range(start_col, start_col + seats_number):
             if self.get_seat_reserv(row, c, False) != None:
-                raise Exception("Tried reserving already occupied seats!")
+                raise Exception(f"Tried reserving already occupied seats {row} {c}!")
         
         r = self.seats.get(row)
         for c in range(start_col, start_col + seats_number):

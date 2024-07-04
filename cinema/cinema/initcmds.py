@@ -2,6 +2,8 @@ from movies.models import *
 from datetime import timedelta
 from django.contrib.auth.models import User
 from django.utils import timezone
+import copy
+import random
 
 
 def erase_db():
@@ -18,25 +20,32 @@ def init_db():
     if len(Movie.objects.all()) > 0:
         return
     
-    tags = ["Action", "Horror", "Romantic", "Adventure", "Fantasy", "Military", "Comedy"]
+    tags = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Horror", "Musical", "Mistery", "Romance", "Science Fiction", "Thriller", "Western"]
     
     for st in tags:
         t = Tag()
         t.name = st
         t.save()
         
-    movies = {
-        "All" : {"director": "all dir", "actors": ["Tipo con nome bello lungo", "act1", "act2", "act3", "act4", "act4", "act5", "act6", "act7", "act8", "act9", "act10"], "duration": timedelta(minutes=120), "tags": tags},
-        "ActHorr" : {"director": "acthorr dir", "actors": ["act1", "act2"], "duration": timedelta(minutes=120), "tags": tags[0:2]},
-        "RomAdv" : {"director": "romadv dir", "actors": ["act1", "act3"], "duration": timedelta(minutes=150), "tags": tags[2:4]},
-        "FantMil" : {"director": "fantmil dir", "actors": ["act6", "act7"], "duration": timedelta(minutes=90), "tags": tags[4:6]},
-        "ActHorr 2" : {"director": "acthorr dir", "actors": ["act1", "act2"], "duration": timedelta(minutes=120), "tags": tags[0:2]},
-        "RomAdv 2" : {"director": "romadv dir", "actors": ["act1", "act3"], "duration": timedelta(minutes=150), "tags": tags[2:4]},
-        "FantMil 2" : {"director": "fantmil dir", "actors": ["act6", "act7"], "duration": timedelta(minutes=90), "tags": tags[4:6]},
-        "ActHorr 3" : {"director": "acthorr dir", "actors": ["act1", "act2"], "duration": timedelta(minutes=120), "tags": tags[0:2]},
-        "RomAdv 3" : {"director": "romadv dir", "actors": ["act1", "act3"], "duration": timedelta(minutes=150), "tags": tags[2:4]},
-        "FantMil 3" : {"director": "fantmil dir", "actors": ["act6", "act7"], "duration": timedelta(minutes=90), "tags": tags[4:6]},
-    }
+    movies = {}
+    
+    for i in range(len(tags)):
+        tgs = [tags[i], tags[(i+1) % len(tags)], tags[(i+2) % len(tags)]]
+        title = ""
+        for t in tgs:
+            title += t + " "
+        actors = [ "Actor " + str(i+j) for j in range(4) ]
+        movies[title] = {
+            "title": title,
+            "director": title + " director",
+            "actors": actors,
+            "duration": timedelta(minutes=120),
+            "tags": tgs
+        }
+        
+        title2 = title + " 2"
+        movies[title2] = movies[title]
+        movies[title2]["title"] = title2
     
     for k in movies:
         m = Movie()
@@ -54,6 +63,7 @@ def init_db():
         "R1" : {"r": 15, "c": 25},
         "R2" : {"r": 8, "c": 15},
         "R3" : {"r": 10, "c": 20},
+        "R4" : {"r": 12, "c": 20}
     }
     
     for k in rooms:
@@ -70,18 +80,28 @@ def init_db():
             u = User.objects.create_user(username="user"+str(i), password="samplepw1!")
             u.save()
     
+
     today = timezone.now()
-    screenings = [
-        { "room": CinemaRoom.objects.filter(name__exact="R1")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today + timedelta(1) },
-        { "room": CinemaRoom.objects.filter(name__exact="R2")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today + timedelta(2) },
-        { "room": CinemaRoom.objects.filter(name__exact="R3")[0], "movie": Movie.objects.filter(title__exact="RomAdv")[0], "date": today + timedelta(3) },
-        { "room": CinemaRoom.objects.filter(name__exact="R3")[0], "movie": Movie.objects.filter(title__exact="FantMil")[0], "date": today + timedelta(4) },
-        { "room": CinemaRoom.objects.filter(name__exact="R1")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today - timedelta(1) },
-        { "room": CinemaRoom.objects.filter(name__exact="R1")[0], "movie": Movie.objects.filter(title__exact="ActHorr")[0], "date": today - timedelta(2) },
-        { "room": CinemaRoom.objects.filter(name__exact="R3")[0], "movie": Movie.objects.filter(title__exact="RomAdv")[0], "date": today - timedelta(3) },
-    ]
+    screenings = []
     
-    m_screenings = []
+    i = 1
+    d = 1
+    for m in Movie.objects.all():
+        s = {}
+        s["movie"] = m
+        s["room"] = CinemaRoom.objects.filter(name__exact="R"+str(i))[0]
+        if i >= len(rooms):
+            i = 1
+            d += 1
+        else:
+            i += 1
+        s["date"] = today + timedelta(d)
+        screenings.append(s)
+        s = copy.deepcopy(s)
+        s["date"] = today - timedelta(d)
+        screenings.append(s)
+
+  
     for sc in screenings:
         s = MovieScreening()
         s.room = sc["room"]
@@ -89,49 +109,37 @@ def init_db():
         s.date = sc["date"]
         s.init_seats()
         s.save()
-        m_screenings.append(s)
+        
     
-    reservations = [
-        {"s": 0, "user": "user1", "seats_args": ("A",4,2)},
-        {"s": 0, "user": "user2", "seats_args": ("B",4,5)},
-        {"s": 1, "user": "user3", "seats_args": ("C",2,1)},
-        {"s": 2, "user": "user4", "seats_args": ("D",1,6)},
-        {"s": 3, "user": "user4", "seats_args": ("E",0,1)},
-        {"s": 0, "user": "user4", "seats_args": ("E",0,1)},
-        {"s": 4, "user": "user4", "seats_args": ("E",0,1)},
-        {"s": 5, "user": "user4", "seats_args": ("E",0,1)},
-        {"s": 6, "user": "user4", "seats_args": ("E",4,4)},
-    ]
+    reservations = {
+        "user1": {"tags": [Tag.objects.filter(name="Action")[0], Tag.objects.filter(name="Fantasy")[0], Tag.objects.filter(name="Science Fiction")[0]], "row": "A", "start": 3, "count": 2 },
+        "user2": {"tags": [Tag.objects.filter(name="Adventure")[0], Tag.objects.filter(name="Comedy")[0], Tag.objects.filter(name="Western")[0]], "row": "B", "start": 1, "count": 3 },
+        "user3": {"tags": [Tag.objects.filter(name="Crime")[0], Tag.objects.filter(name="Mistery")[0], Tag.objects.filter(name="Thriller")[0]], "row": "C", "start": 4, "count": 2 },
+        "user4": {"tags": [Tag.objects.filter(name="Animation")[0], Tag.objects.filter(name="Musical")[0], Tag.objects.filter(name="Romance")[0]], "row": "D", "start": 0, "count": 2 },
+    }
     
     for sr in reservations:
-        r = Reservation()
-        r.screening = m_screenings[sr["s"]]
-        r.user = User.objects.filter(username__exact=sr["user"])[0]
-        seats = sr["seats_args"]
-        r.save()
-        r.set_seats(seats[0], seats[1], seats[2])
-        r.save()
-        
-    reviews = [
-        {"user": "user1", "movie": Movie.objects.filter(title__exact="All")[0], "score": 6, "text": "iouwegeifgwaibibwibviw<kebviuwabvkjbsd<ibviubeivbsiuvhbwibskvdjvbwasuvbakljv"},
-        {"user": "user2", "movie": Movie.objects.filter(title__exact="All")[0], "score": 8, "text": "iouwegeifgwaibibwibviw<kebviuwab a sfafs asfma lkl kfa sflkaò fmlkam flkam lkfaslk "},
-        {"user": "user3", "movie": Movie.objects.filter(title__exact="All")[0], "score": 5, "text": "oeiqjho wj weoijwo oiwj goiwj goiwrg oiwoig jwoigw jibviubeivbsiuvhbwibskvdjvbwasuvbakljv"},
-        {"user": "user4", "movie": Movie.objects.filter(title__exact="All")[0], "score": 9, "text": "iwethiuwhe iuw euiwiue hui whiuwefh uiwefh uihwef iuh iu ehwiuefh iuhe iu"},
-        {"user": "user1", "movie": Movie.objects.filter(title__exact="ActHorr")[0], "score": 5, "text": "iwethiuwhe iuw erterg ehwiuefh iuhe iu"},
-        {"user": "user4", "movie": Movie.objects.filter(title__exact="ActHorr")[0], "score": 9, "text": "iub ewqibw efiubwi uwe ibwe aiwuhiweb l  e"},
-    ]
+        ts = reservations[sr]["tags"]
+        mvs = set(Movie.objects.filter(tags=ts[0]).exclude(title__contains="2") | Movie.objects.filter(tags=ts[1]).exclude(title__contains="2") | Movie.objects.filter(tags=ts[2]).exclude(title__contains="2"))
+        for m in mvs:
+            r = Reservation()
+            s = MovieScreening.objects.filter(movie=m).filter(date__lt=timezone.now())[0]
+            r.user = User.objects.filter(username__exact=sr)[0]
+            r.screening = s
+            r.save()
+            r.set_seats(reservations[sr]["row"], reservations[sr]["start"], reservations[sr]["count"])
+            r.save()
     
-    for sr in reviews:
-        r = Review()
-        r.user = User.objects.filter(username__exact=sr["user"])[0]
-        r.movie = sr["movie"]
-        r.score = sr["score"]
-        r.text = sr["text"]
-        r.save()
+    for u in User.objects.all():
+        mvs = [m for m in Movie.objects.all() if m.can_user_review(u.id)][2:]
+        t = " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras blandit tristique nisi, nec sodales sapien blandit ut. Integer sed commodo dui."
+        for m in mvs:
+            r = Review()
+            r.user = u
+            r.movie = m
+            score = random.randint(1, 10)
+            r.score = score
+            r.text = str(score) + "/10 from " + u.username + t
+            r.save()
     
-    print("Dump DB")
-    print(Tag.objects.all())
-    print(Movie.objects.all())
-    print(CinemaRoom.objects.all())
-    print(MovieScreening.objects.all())
-    print(Reservation.objects.all())
+    print("Finished DB initialization")

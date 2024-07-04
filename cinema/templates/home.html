@@ -22,7 +22,7 @@
         {% endfor %}
         {% if see_more %}
         <div class="col d-flex align-items-center justify-content-center">
-            <a href="#">see more...</a>
+            <a href={% url "movies:upcomingmovies" %}>see more...</a>
         </div>
         {% endif %}
     </div>
