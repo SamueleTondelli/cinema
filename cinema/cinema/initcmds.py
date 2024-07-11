@@ -14,21 +14,21 @@ def erase_db():
     MovieScreening.objects.all().delete()
     Reservation.objects.all().delete()
     Review.objects.all().delete()
-    
-    
+
+
 def init_db():
     if len(Movie.objects.all()) > 0:
         return
-    
+
     tags = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Horror", "Musical", "Mistery", "Romance", "Science Fiction", "Thriller", "Western"]
-    
+
     for st in tags:
         t = Tag()
         t.name = st
         t.save()
-        
+
     movies = {}
-    
+
     for i in range(len(tags)):
         tgs = [tags[i], tags[(i+1) % len(tags)], tags[(i+2) % len(tags)]]
         title = ""
@@ -42,11 +42,11 @@ def init_db():
             "duration": timedelta(minutes=120),
             "tags": tgs
         }
-        
+
         title2 = title + " 2"
         movies[title2] = movies[title]
         movies[title2]["title"] = title2
-    
+
     for k in movies:
         m = Movie()
         e = movies.get(k)
@@ -58,14 +58,14 @@ def init_db():
         for t in e["tags"]:
             m.tags.add(Tag.objects.filter(name__exact=t)[0].id)
         m.save()
-    
+
     rooms = {
         "R1" : {"r": 15, "c": 25},
         "R2" : {"r": 8, "c": 15},
         "R3" : {"r": 10, "c": 20},
         "R4" : {"r": 12, "c": 20}
     }
-    
+
     for k in rooms:
         r = CinemaRoom()
         e = rooms.get(k)
@@ -73,17 +73,17 @@ def init_db():
         r.seat_rows = e["r"]
         r.seat_cols = e["c"]
         r.save()
-    
+
     if len(User.objects.all()) == 1:
         print("Creating users")
         for i in range(1,5):
             u = User.objects.create_user(username="user"+str(i), password="samplepw1!")
             u.save()
-    
+
 
     today = timezone.now()
     screenings = []
-    
+
     i = 1
     d = 1
     for m in Movie.objects.all():
@@ -101,7 +101,7 @@ def init_db():
         s["date"] = today - timedelta(d)
         screenings.append(s)
 
-  
+
     for sc in screenings:
         s = MovieScreening()
         s.room = sc["room"]
@@ -109,15 +109,15 @@ def init_db():
         s.date = sc["date"]
         s.init_seats()
         s.save()
-        
-    
+
+
     reservations = {
         "user1": {"tags": [Tag.objects.filter(name="Action")[0], Tag.objects.filter(name="Fantasy")[0], Tag.objects.filter(name="Science Fiction")[0]], "row": "A", "start": 3, "count": 2 },
         "user2": {"tags": [Tag.objects.filter(name="Adventure")[0], Tag.objects.filter(name="Comedy")[0], Tag.objects.filter(name="Western")[0]], "row": "B", "start": 1, "count": 3 },
         "user3": {"tags": [Tag.objects.filter(name="Crime")[0], Tag.objects.filter(name="Mistery")[0], Tag.objects.filter(name="Thriller")[0]], "row": "C", "start": 4, "count": 2 },
         "user4": {"tags": [Tag.objects.filter(name="Animation")[0], Tag.objects.filter(name="Musical")[0], Tag.objects.filter(name="Romance")[0]], "row": "D", "start": 0, "count": 2 },
     }
-    
+
     for sr in reservations:
         ts = reservations[sr]["tags"]
         mvs = set(Movie.objects.filter(tags=ts[0]).exclude(title__contains="2") | Movie.objects.filter(tags=ts[1]).exclude(title__contains="2") | Movie.objects.filter(tags=ts[2]).exclude(title__contains="2"))
@@ -129,7 +129,7 @@ def init_db():
             r.save()
             r.set_seats(reservations[sr]["row"], reservations[sr]["start"], reservations[sr]["count"])
             r.save()
-    
+
     for u in User.objects.all():
         mvs = [m for m in Movie.objects.all() if m.can_user_review(u.id)][2:]
         t = " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras blandit tristique nisi, nec sodales sapien blandit ut. Integer sed commodo dui."
@@ -141,5 +141,10 @@ def init_db():
             r.score = score
             r.text = str(score) + "/10 from " + u.username + t
             r.save()
-    
+
     print("Finished DB initialization")
+
+
+if __name__ == "__main__":
+    erase_db()
+    init_db()

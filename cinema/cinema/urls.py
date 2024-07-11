@@ -31,9 +31,6 @@ urlpatterns = [
     path("logout/", auth_view.LogoutView.as_view(), name="logout"),
     path("register/", CreateUserView.as_view(), name="register"),
     path("registermanager/", CreateManagerView.as_view(), name="registermanager"),
-    
-    path("movies/", include("movies.urls"))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
 
-#erase_db()
-#init_db()
+    path("movies/", include("movies.urls"))
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
