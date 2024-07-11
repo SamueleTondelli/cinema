@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.test import TestCase
 from .models import *
 from django.urls import reverse
+from django.contrib.auth.models import Group
 
 
 class MovieScreeningTests(TestCase):
@@ -118,3 +119,30 @@ class UpcomingMoviesViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "There are no movies here")
         self.assertQuerySetEqual(response.context["object_list"], [m2, m1, m3])
+
+
+class ManagerMenuViewTest(TestCase):
+    def test_not_manager(self):
+        response = self.client.get(reverse("movies:managermenu"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/login/?auth=notok&next=/movies/managermenu/")
+
+        u = User.objects.create_user(username="u1", password="samplepw1!")
+        u.save()
+        g = Group(name="Clients")
+        g.save()
+        g.user_set.add(u)
+        self.client.login(username="u1", password="samplepw1!")
+        response = self.client.get(reverse("movies:managermenu"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/login/?auth=notok&next=/movies/managermenu/")
+
+    def test_is_manager(self):
+        m = User.objects.create_user(username="m1", password="samplepw1!")
+        m.save()
+        g = Group(name="Managers")
+        g.save()
+        g.user_set.add(m)
+        self.client.login(username="m1", password="samplepw1!")
+        response = self.client.get(reverse("movies:managermenu"))
+        self.assertEqual(response.status_code, 200)
