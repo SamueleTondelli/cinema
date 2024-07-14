@@ -15,10 +15,15 @@ Install dependencies
 pipenv install
 ```
 
-Create the superuser:
+Migrate the database:
 ```
 cd cinema
-python manage.py createsuperuser
+python3 manage.py migrate
+```
+
+Create the superuser:
+```
+python3 manage.py createsuperuser
 ```
 
 Then run the server!
@@ -26,7 +31,8 @@ Then run the server!
 python3 manage.py runserver
 ```
 
-The database can also be initialized by running the ```initcmds.py``` script, note that before the initialization **the database will be deleted**
-```
-python3 ./initcmds.py
-```
+## Database initialization
+For the app to correctly work, it needs the right groups (Clients and Managers) with the right permissions, they can either be created from the admin page or with the helper function ```init_groups()``` in ```cinema/initcmds.py``` added to the file ```cinema/urls.py```.
+There's also the possibility to initialize the database with example values, using two other helper function in ```cinema/initcmds.py```:
+- ```erase_db()```, erases the database (but keeps the users), suggested before using the next function to avoid conflicts
+- ```init_db()```, adds example entries to the database, **warning**: it will try to use certain users which are created only when there's at most 1 user (the superuser)
