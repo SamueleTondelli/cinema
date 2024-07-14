@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import copy
 import random
+from django.contrib.auth.models import Group
 
 
 def erase_db():
@@ -74,11 +75,17 @@ def init_db():
         r.seat_cols = e["c"]
         r.save()
 
-    if len(User.objects.all()) == 1:
+    if len(User.objects.all()) <= 1:
         print("Creating users")
         for i in range(1,5):
             u = User.objects.create_user(username="user"+str(i), password="samplepw1!")
+            g = Group.objects.get(name="Clients")
+            g.user_set.add(u)
             u.save()
+
+        m = User.objects.create_user(username="manager1", password="samplepw1!")
+        g = Group.objects.get(name="Managers")
+        g.user_set.add(m)
 
 
     today = timezone.now()
@@ -145,6 +152,13 @@ def init_db():
     print("Finished DB initialization")
 
 
-if __name__ == "__main__":
-    erase_db()
-    init_db()
+def init_groups():
+    clients = Group.objects.get_or_create(name="Clients")
+    clients.permissions.set(["movies.add_reservation", "movies.change_reservation", "movies.remove_reservation",
+                            "movies.add_review", "movies.change_review", "movies.remove_review"])
+    managers = Group.objects.get_or_create(name="Managers")
+    managers.permissions.set(["movies.add_reservation", "movies.change_reservation", "movies.remove_reservation",
+                            "movies.add_review", "movies.change_review", "movies.remove_review",
+                            "movies.add_cinemaroom", "movies.change_cinemaroom", "movies.remove_cinemaroom",
+                            "movies.add_movie", "movies.change_movie", "movies.remove_movie",
+                            "movies.add_moviescreening", "movies.change_moviescreening", "movies.remove_moviescreening",])
