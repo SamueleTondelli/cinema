@@ -13,14 +13,13 @@ def get_user_tagv(user: User):
         for t in m.tags.all():
             tagv[t.name] += 1
 
-    #print(f"{user} {tagv}")
-
     return tagv
 
 
 def get_nmost_similar(user: User, n=None):
     u_tagv = get_user_tagv(user)
     user_mag = 0
+    # compute the magnitude of the user tagv
     for t in u_tagv:
         user_mag += u_tagv[t] * u_tagv[t]
 
@@ -29,11 +28,13 @@ def get_nmost_similar(user: User, n=None):
 
     user_mag_sqrt = sqrt(user_mag)
 
+    # get all of the other user which have at least watched one movie
     other_users = list(User.objects.exclude(id=user.id))
     other_users = [u for u in other_users if len(Reservation.objects.filter(user=u)) > 0]
 
     users_tags = { u:get_user_tagv(u) for u in other_users }
-    res = []
+    # compute the cosine similarity
+    res = [] # list of tuples (user, cos_similarity)
     for u in users_tags:
         dot_prod = 0
         mag = 0
@@ -43,6 +44,7 @@ def get_nmost_similar(user: User, n=None):
             mag += tv[t] * tv[t]
         res.append((u, dot_prod/(sqrt(mag)*user_mag_sqrt)))
 
+    # sort by descending similarity
     res.sort(key=lambda ut: ut[1], reverse=True)
     if n != None:
         res = res[:n]
@@ -55,9 +57,10 @@ def get_recommended_movies(user: User, n):
     upcoming = Movie.get_upcoming_movies()
     rec_dict = {}
     for u in sim_us:
-        movies = set(get_user_movies(u[0])).difference(us_movies)
+        # upcoming movies seen by u and not by user
+        movies = set(get_user_movies(u[0])).difference(us_movies).intersection(upcoming)
         for m in movies:
-            if m in rec_dict and m in upcoming:
+            if m in rec_dict:
                 rec_dict[m] += u[1]
             else:
                 rec_dict[m] = u[1]
@@ -69,6 +72,7 @@ def get_recommended_movies(user: User, n):
     rec = [ r[0] for r in rec ]
 
     if len(rec) < n:
+        # fill the result with the highest rated remaining movies
         all_movies = set(upcoming).difference(us_movies).difference(set(rec))
         fill_movies = sorted(list(all_movies), key=lambda m: m.get_score() if m.get_score() != None else 0 , reverse=True)[:n - len(rec)]
         rec += fill_movies

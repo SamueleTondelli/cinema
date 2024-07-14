@@ -7,6 +7,9 @@ from django.contrib.auth.models import Group
 
 class MovieScreeningTests(TestCase):
     def test_init_seats(self):
+        """
+        All of the seats of a reservations are correctly initialized to None (free)
+        """
         r = CinemaRoom(name="R", seat_rows=5, seat_cols=10)
         s = MovieScreening()
         s.room = r
@@ -21,6 +24,9 @@ class MovieScreeningTests(TestCase):
         self.assertEqual(s.seats, seats)
 
     def test_set_reservation(self):
+        """
+        Reservations can only be made on free and existing seats
+        """
         r = CinemaRoom(name="R", seat_rows=5, seat_cols=5)
         s = MovieScreening()
         s.room = r
@@ -43,6 +49,9 @@ class MovieScreeningTests(TestCase):
         self.assertEqual(s.seats, seats)
 
     def test_remove_reservation(self):
+        """
+        Removing a reservation only frees the seats of said reservation
+        """
         r = CinemaRoom(name="R", seat_rows=5, seat_cols=5)
         s = MovieScreening()
         s.room = r
@@ -60,6 +69,9 @@ class MovieScreeningTests(TestCase):
         self.assertEqual(s.seats, seats)
 
     def test_get_free_seats(self):
+        """
+        Number of free seats is correctly calculated and it gets lower when new reservations are made
+        """
         r = CinemaRoom(name="R", seat_rows=5, seat_cols=5)
         s = MovieScreening()
         s.room = r
@@ -73,12 +85,18 @@ class MovieScreeningTests(TestCase):
 
 class UpcomingMoviesViewTest(TestCase):
     def test_no_upcoming_movies(self):
+        """
+        If there are no upcoming movies, the upcomingmovies page should display "There are no movies here"
+        """
         response = self.client.get(reverse("movies:upcomingmovies"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "There are no movies here")
         self.assertQuerySetEqual(response.context["object_list"], [])
 
     def test_upcoming_movies(self):
+        """
+        The upcomingmovies page should only contain upcoming movies ordered based on the closest screening date
+        """
         m1 = Movie(title="m1", duration=timedelta(minutes=120))
         m2 = Movie(title="m2", duration=timedelta(minutes=120))
         m3 = Movie(title="m3", duration=timedelta(minutes=120))
@@ -123,6 +141,9 @@ class UpcomingMoviesViewTest(TestCase):
 
 class ManagerMenuViewTest(TestCase):
     def test_not_manager(self):
+        """
+        Non managers should not be able to access the managermenu page
+        """
         response = self.client.get(reverse("movies:managermenu"))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/login/?auth=notok&next=/movies/managermenu/")
@@ -138,6 +159,9 @@ class ManagerMenuViewTest(TestCase):
         self.assertRedirects(response, "/login/?auth=notok&next=/movies/managermenu/")
 
     def test_is_manager(self):
+        """
+        Managers and the admin should be able to access the managermenu page
+        """
         m = User.objects.create_user(username="m1", password="samplepw1!")
         m.save()
         g = Group(name="Managers")

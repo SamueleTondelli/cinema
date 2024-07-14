@@ -21,36 +21,36 @@ from braces.views import GroupRequiredMixin
 class MovieDetailView(DetailView):
     model = Movie
     template_name = "movies/info_movie.html"
-    
+
     def get_movie_score(self):
         return self.get_object().get_score()
-    
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
-        
+
         act_list = ""
         m = self.get_object()
         for a in m.actors:
             act_list += a + ", "
         ctx["actor_list"] = act_list[:-2]
-        
+
         tag_list = ""
         for t in m.tags.all():
             tag_list += t.name + ", "
         ctx["tag_list"] = tag_list[:-2]
-        
+
         return ctx
-    
+
     def can_user_review(self):
         if self.request.user.is_authenticated:
             return self.get_object().can_user_review(self.request.user.id)
         return False
-    
+
 
 @login_required
 def my_reservations(request):
     user = get_object_or_404(User, pk=request.user.pk)
-    ctx = { 
+    ctx = {
         "upcoming_res" : user.reservations.filter(screening__date__gte=timezone.now()).order_by('screening__date'),
         "old_res" : user.reservations.filter(screening__date__lt=timezone.now()).order_by('-screening__date'),
     }
@@ -67,11 +67,11 @@ class MovieListView(ListView):
 class UpcomingMoviesView(MovieListView):
     title = "Upcoming Movies"
     header = title
-    
+
     def get_queryset(self) -> QuerySet[Any]:
         return Movie.get_upcoming_movies()
-    
-    
+
+
 def search(request):
     if request.method == "POST":
         form = SearchForm(request.POST)
@@ -82,16 +82,16 @@ def search(request):
             return redirect("movies:searchresults", search_string, search_where, sort)
     else:
         form = SearchForm()
-        
+
     return render(request, template_name="movies/search.html", context={ "form": form })
 
 
 class SearchResultsView(MovieListView):
     title = "Search Results"
     header = title
-    
+
     def get_queryset(self) -> QuerySet[Any]:
-        search_string = self.request.resolver_match.kwargs["search_string"] 
+        search_string = self.request.resolver_match.kwargs["search_string"]
         search_where = self.request.resolver_match.kwargs["search_where"]
         sort = self.request.resolver_match.kwargs["sorted"]
         if search_where == "Title":
@@ -102,10 +102,10 @@ class SearchResultsView(MovieListView):
             results = []
             for t in re.findall(r'\w+', search_string):
                 results.extend(self.model.objects.filter(tags__name__icontains=t))
-            
+
             c = Counter(results)
             q = []
-            
+
             for m in c:
                 i = 0
                 m_score = 0 if m.get_score() == None else m.get_score()
@@ -115,12 +115,12 @@ class SearchResultsView(MovieListView):
                         break
                     i += 1
                 q.insert(i, m)
-                
+
         if sort == "True" and search_where != "Tags":
             q = sorted(q, key=lambda m : 0 if m.get_score() == None else m.get_score(), reverse=True)
-            
+
         return q
-    
+
 
 @login_required
 def make_reservation(request, pk):
@@ -128,7 +128,7 @@ def make_reservation(request, pk):
     if s.date < timezone.now():
         return HttpResponseNotFound("")
     if request.method == "POST":
-        print(f"Received {request.body}")
+        #print(f"Received {request.body}")
         ress = Reservation.objects.filter(user=request.user,screening=s)
         if len(ress) > 0:
             r = ress[0]
@@ -150,7 +150,7 @@ def make_reservation(request, pk):
         except Exception as e:
             print(e)
             r.delete()
-            return HttpResponse(reverse("movies:myreservations") + "?makeres=err")    
+            return HttpResponse(reverse("movies:myreservations") + "?makeres=err")
         return HttpResponse(reverse("movies:myreservations") + "?makeres=ok")
     return render(request, template_name="movies/make_reservation.html", context={"screening": s})
 
@@ -160,7 +160,7 @@ def get_screening_seats(request, pk):
     s = get_object_or_404(MovieScreening, pk=pk)
     user = request.user
     r = Reservation.objects.filter(user=user,screening=s)
-    print(f"requesting seats of {pk}")
+    #print(f"requesting seats of {pk}")
     info = {
         "seats": s.seats,
         "rows": s.room.seat_rows,
@@ -197,7 +197,7 @@ def leave_review(request, pk):
             r.text = text
             r.save()
             return redirect("movies:infomovie", pk)
-    
+
     form = ReviewForm()
     return render(request, template_name="movies/leave_review.html", context={"movie":movie, "form": form})
 
@@ -205,11 +205,11 @@ def leave_review(request, pk):
 class MyReviewsView(LoginRequiredMixin, ListView):
     model = Review
     template_name = "movies/my_reviews.html"
-    
+
     def get_queryset(self) -> QuerySet[Any]:
         user = User.objects.filter(id=self.request.user.id)[0]
         return Review.objects.filter(user=user)
-    
+
 @login_required
 def delete_review(request, pk):
     rev = get_object_or_404(Review, pk=pk)
@@ -239,16 +239,16 @@ class AddMovieView(GroupRequiredMixin, AddEntryView):
     model = Movie
     form_class = AddMovieForm
     success_url = reverse_lazy("movies:managermenu")
-    
-    
+
+
 class AddScreeningView(GroupRequiredMixin, AddEntryView):
     group_required = ["Managers"]
     title = "Add Screening"
     model = MovieScreening
     form_class = AddScreeningForm
     success_url = reverse_lazy("movies:managermenu")
-    
-    
+
+
 class AddRoomView(GroupRequiredMixin, AddEntryView):
     group_required = ["Managers"]
     title = "Add Room"
@@ -256,17 +256,17 @@ class AddRoomView(GroupRequiredMixin, AddEntryView):
     model = CinemaRoom
     form_class = AddRoomForm
     success_url = reverse_lazy("movies:managermenu")
-    
-    
+
+
 class CancelScreeningsView(GroupRequiredMixin, ListView):
     group_required = ["Managers"]
     model = MovieScreening
     template_name = "movies/cancel_screenings.html"
-    
+
     def get_queryset(self):
         return MovieScreening.objects.filter(date__gte=timezone.now()).order_by("date")
-    
-    
+
+
 @user_passes_test(is_manager)
 def delete_screening(request, pk):
     s = get_object_or_404(MovieScreening, pk=pk)
@@ -278,12 +278,12 @@ class RemoveMoviesView(GroupRequiredMixin, MovieListView):
     group_required = ["Managers"]
     title = "Delete movies"
     header = title
-    
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
         ctx["delete_movie"] = "yes"
         return ctx
-    
+
 
 @user_passes_test(is_manager)
 def delete_movie(request, pk):
@@ -296,7 +296,7 @@ class RemoveRoomsView(GroupRequiredMixin, ListView):
     group_required = ["Managers"]
     model = CinemaRoom
     template_name = "movies/remove_rooms.html"
-    
+
 
 @user_passes_test(is_manager)
 def delete_room(request, pk):

@@ -171,7 +171,6 @@ class Reservation(models.Model):
         letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         row = letters[idx // self.screening.room.seat_cols]
         col = idx % self.screening.room.seat_cols
-        print(f"{idx}: {row}{col}")
         self.screening.set_reservation(row, col, 1, self.id)
         self.seats.append((row, col))
 
