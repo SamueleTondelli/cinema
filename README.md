@@ -47,3 +47,10 @@ They test:
 - that the reservation logic works correctly and avoids conflicts
 - that movies showed as "upcoming" are actually upcoming
 - that only managers and the admin can access the manager menu
+
+## Dependencies
+All of the dependencies are contained in the ```Pipfile``` file, in particular:
+- ```django``` is used as the backend framework
+- ```django-crispy-forms``` and ```crispy-bootstrap4``` are necessary to use django crispy forms
+- ```django-braces``` is used for the GroupRequiredMixin to make certain CBV only accessible to certain groups
+- ```pillow``` is used to handle images
