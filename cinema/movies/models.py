@@ -97,7 +97,6 @@ class MovieScreening(models.Model):
 
         screenings = MovieScreening.objects.filter(room=self.room)
         for s in screenings:
-            print(s.date - self.date)
             if s.date > self.date:
                 if self.movie.duration >= s.date - self.date:
                     raise ValidationError(f"Error, screening overlapping with {s}")
@@ -188,3 +187,6 @@ class Reservation(models.Model):
 
     def __str__(self):
         return str(self.screening) + " reserved by " + str(self.user)
+
+    class Meta:
+        unique_together = (('screening', 'user'))

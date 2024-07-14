@@ -34,3 +34,6 @@ urlpatterns = [
 
     path("movies/", include("movies.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+#erase_db()
+#init_db()

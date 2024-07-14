@@ -146,3 +146,7 @@ class ManagerMenuViewTest(TestCase):
         self.client.login(username="m1", password="samplepw1!")
         response = self.client.get(reverse("movies:managermenu"))
         self.assertEqual(response.status_code, 200)
+
+        self.client.login(username="admin", password="admin")
+        response = self.client.get(reverse("movies:managermenu"))
+        self.assertEqual(response.status_code, 200)

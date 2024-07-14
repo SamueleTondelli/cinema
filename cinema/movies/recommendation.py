@@ -8,13 +8,13 @@ def get_user_movies(user: User):
 def get_user_tagv(user: User):
     m_watch = get_user_movies(user)
     tagv = { t.name : 0 for t in Tag.objects.all() }
-    
+
     for m in m_watch:
         for t in m.tags.all():
             tagv[t.name] += 1
-    
+
     #print(f"{user} {tagv}")
-    
+
     return tagv
 
 
@@ -23,15 +23,15 @@ def get_nmost_similar(user: User, n=None):
     user_mag = 0
     for t in u_tagv:
         user_mag += u_tagv[t] * u_tagv[t]
-        
+
     if user_mag == 0:
         return []
-    
+
     user_mag_sqrt = sqrt(user_mag)
-    
+
     other_users = list(User.objects.exclude(id=user.id))
     other_users = [u for u in other_users if len(Reservation.objects.filter(user=u)) > 0]
-    
+
     users_tags = { u:get_user_tagv(u) for u in other_users }
     res = []
     for u in users_tags:
@@ -42,7 +42,7 @@ def get_nmost_similar(user: User, n=None):
             dot_prod += u_tagv[t] * tv[t]
             mag += tv[t] * tv[t]
         res.append((u, dot_prod/(sqrt(mag)*user_mag_sqrt)))
-        
+
     res.sort(key=lambda ut: ut[1], reverse=True)
     if n != None:
         res = res[:n]
@@ -63,19 +63,13 @@ def get_recommended_movies(user: User, n):
                 rec_dict[m] = u[1]
         if len(rec_dict) >= n:
             break
-    
+
     rec = [ (m, rec_dict[m]) for m in rec_dict ]
     rec.sort(key=lambda rm: rm[1], reverse=True)
     rec = [ r[0] for r in rec ]
-    
+
     if len(rec) < n:
         all_movies = set(upcoming).difference(us_movies).difference(set(rec))
         fill_movies = sorted(list(all_movies), key=lambda m: m.get_score() if m.get_score() != None else 0 , reverse=True)[:n - len(rec)]
         rec += fill_movies
     return rec
-        
-
-        
-    
-    
-    
