@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import copy
 import random
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 
 
 def erase_db():
@@ -154,11 +154,16 @@ def init_db():
 
 def init_groups():
     clients = Group.objects.get_or_create(name="Clients")
-    clients.permissions.set(["movies.add_reservation", "movies.change_reservation", "movies.remove_reservation",
-                            "movies.add_review", "movies.change_review", "movies.remove_review"])
+    clients_perms = ["add_reservation", "change_reservation", "delete_reservation",
+                            "add_review", "change_review", "delete_review"]
+    for p in clients_perms:
+        clients[0].permissions.add(Permission.objects.get(codename=p))
+
     managers = Group.objects.get_or_create(name="Managers")
-    managers.permissions.set(["movies.add_reservation", "movies.change_reservation", "movies.remove_reservation",
-                            "movies.add_review", "movies.change_review", "movies.remove_review",
-                            "movies.add_cinemaroom", "movies.change_cinemaroom", "movies.remove_cinemaroom",
-                            "movies.add_movie", "movies.change_movie", "movies.remove_movie",
-                            "movies.add_moviescreening", "movies.change_moviescreening", "movies.remove_moviescreening",])
+    managers_perms = ["add_reservation", "change_reservation", "delete_reservation",
+                            "add_review", "change_review", "delete_review",
+                            "add_cinemaroom", "change_cinemaroom", "delete_cinemaroom",
+                            "add_movie", "change_movie", "delete_movie",
+                            "add_moviescreening", "change_moviescreening", "delete_moviescreening",]
+    for p in managers_perms:
+        managers[0].permissions.add(Permission.objects.get(codename=p))
