@@ -36,8 +36,8 @@ urlpatterns = [
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Uncomment this line to automatically create the groups with the appropriate permissions
-init_groups()
+#init_groups()
 
 # Uncomment these lines to delete and fill the database with example values
-erase_db()
-init_db()
+#erase_db()
+#init_db()
