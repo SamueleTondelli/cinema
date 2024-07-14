@@ -35,7 +35,8 @@ urlpatterns = [
     path("movies/", include("movies.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-init_groups()
+# Uncomment this line to automatically create the groups with the appropriate permissions
+#init_groups()
 
 # Uncomment these lines to delete and fill the database with example values
 #erase_db()
