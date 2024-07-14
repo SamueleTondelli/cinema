@@ -6,6 +6,27 @@
 {% endblock header1 %}
 
 {% block content %}
+{% if "ok" in request.GET.delete %}
+<div id="info" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Movie deleted successfully</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#info").modal("show");
+    });
+</script>
+{% endif %}
     {% if object_list|length == 0 %}
         <h2>There are no movies here</h2>
     {% endif %}
@@ -30,6 +51,6 @@
                 <a class="btn btn-danger" href="{% url 'movies:deletemovie' m.pk %}">Remove</a>
             </div>
             {% endif %}
-        </div>        
+        </div>
     {% endfor %}
 {% endblock content %}

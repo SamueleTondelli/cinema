@@ -1,19 +1,37 @@
-{% extends "base.html" %}
-{% block title %}Cancel Screenings{% endblock title %}
+{% extends "base.html" %} {% block title %}Cancel Screenings{% endblock title %}
 {% block header1 %}
-    <h1>Cancel Screenings</h1>
-{% endblock header1 %}
-
-{% block content %}
-    {% if object_list|length == 0 %}
-        <h2>There are no future screenings</h2>
-    {% endif %}
-    {% for s in object_list %}
-        <div class="card mb-2">
-            <div class="card-header">{{s.movie.title}} at {{s.date}} in room {{s.room.name}}</div>
-            <div class="card-body">
-                <a class="btn btn-danger" href="{% url 'movies:deletescreening' s.pk %}">Cancel</a>
+<h1>Cancel Screenings</h1>
+{% endblock header1 %} {% block content %} {% if "ok" in request.GET.delete %}
+<div id="info" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Screening cancelled successfully</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">
+                    Close
+                </button>
             </div>
         </div>
-    {% endfor %}
-{% endblock content %}
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#info").modal("show");
+    });
+</script>
+{% endif %} {% if object_list|length == 0 %}
+<h2>There are no future screenings</h2>
+{% endif %} {% for s in object_list %}
+<div class="card mb-2">
+    <div class="card-header">
+        {{s.movie.title}} at {{s.date}} in room {{s.room.name}}
+    </div>
+    <div class="card-body">
+        <a class="btn btn-danger" href="{% url 'movies:deletescreening' s.pk %}"
+            >Cancel</a
+        >
+    </div>
+</div>
+{% endfor %} {% endblock content %}

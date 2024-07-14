@@ -5,6 +5,26 @@
 {% endblock header1 %}
 
 {% block content %}
+    {% if "ok" in request.GET.addentry %}
+        <div id="info" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>Entry added successfully</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+          $(document).ready(function(){
+            $("#info").modal('show');
+          });
+        </script>
+    {% endif %}
+
     <h2>Actions:</h2>
     <br>
     <div class="list-group">

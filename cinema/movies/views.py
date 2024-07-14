@@ -238,7 +238,9 @@ class AddMovieView(GroupRequiredMixin, AddEntryView):
     title = "Add Movie"
     model = Movie
     form_class = AddMovieForm
-    success_url = reverse_lazy("movies:managermenu")
+
+    def get_success_url(self):
+        return reverse("movies:managermenu") + "?addentry=ok"
 
 
 class AddScreeningView(GroupRequiredMixin, AddEntryView):
@@ -246,16 +248,19 @@ class AddScreeningView(GroupRequiredMixin, AddEntryView):
     title = "Add Screening"
     model = MovieScreening
     form_class = AddScreeningForm
-    success_url = reverse_lazy("movies:managermenu")
+
+    def get_success_url(self):
+        return reverse("movies:managermenu") + "?addentry=ok"
 
 
 class AddRoomView(GroupRequiredMixin, AddEntryView):
     group_required = ["Managers"]
     title = "Add Room"
     model = CinemaRoom
-    model = CinemaRoom
     form_class = AddRoomForm
-    success_url = reverse_lazy("movies:managermenu")
+
+    def get_success_url(self):
+        return reverse("movies:managermenu") + "?addentry=ok"
 
 
 class CancelScreeningsView(GroupRequiredMixin, ListView):
@@ -271,7 +276,7 @@ class CancelScreeningsView(GroupRequiredMixin, ListView):
 def delete_screening(request, pk):
     s = get_object_or_404(MovieScreening, pk=pk)
     s.delete()
-    return redirect("movies:cancelscreenings")
+    return redirect(reverse("movies:cancelscreenings") + "?delete=ok")
 
 
 class RemoveMoviesView(GroupRequiredMixin, MovieListView):
@@ -289,7 +294,7 @@ class RemoveMoviesView(GroupRequiredMixin, MovieListView):
 def delete_movie(request, pk):
     m = get_object_or_404(Movie, pk=pk)
     m.delete()
-    return redirect("movies:removemovies")
+    return redirect(reverse("movies:removemovies") + "?delete=ok")
 
 
 class RemoveRoomsView(GroupRequiredMixin, ListView):
@@ -302,4 +307,4 @@ class RemoveRoomsView(GroupRequiredMixin, ListView):
 def delete_room(request, pk):
     r = get_object_or_404(CinemaRoom, pk=pk)
     r.delete()
-    return redirect("movies:removerooms")
+    return redirect(reverse("movies:removerooms") + "?delete=ok")
